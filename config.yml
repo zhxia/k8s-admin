@@ -1,0 +1,17 @@
+server:
+  host: 0.0.0.0
+  port: 9981
+auth:
+  users:
+    cmdb: zLhcv1q65nzUE1HdbtSmrg==
+    release: cjXNGUJ60dMVDOOmDVNeYQ==
+k8s:
+  namespace: default
+  config: /Users/zhxia/workspace/go/ak8s/config
+log:
+  level: TRACE
+  dir: /tmp
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password:

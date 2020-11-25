@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-dep
+  labels:
+    app: nginx
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+        - name: configmap-volume
+          configMap:
+            name: redis-conf
+      containers:
+        - env:
+            - name: aaa
+              value: bbb
+          name: nginx
+          image: nginx:1.7.9
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /etc/redis
+              name: configmap-volume
+        - name: redis
+          env:
+            - name: redis
+              value: cccc
+          image: redis:3
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5  # 容器启动后第一次执行探测是需要等待多少秒
+            periodSeconds: 15 # 执行探测的频率。默认是10秒，最小1秒
+            timeoutSeconds: 1 # 探测超时时间。默认1秒，最小1秒
+            successThreshold: 1 # 探测失败后，最少连续探测成功多少次才被认定为成功。默认是1。对于liveness必须是1。最小值是1。
+            failureThreshold: 3 # 探测成功后，最少连续探测失败多少次才被认定为失败。默认是3。最小值是1。
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1

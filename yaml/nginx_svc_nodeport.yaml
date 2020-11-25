@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-svc-nodeport
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: sample
+  ports:
+    - name: http
+      nodePort: 30080
+      targetPort: 80
+      port: 3000

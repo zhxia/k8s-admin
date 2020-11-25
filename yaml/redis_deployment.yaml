@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-v2
+  labels:
+    app: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      release: v2
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  strategy:
+    rollingUpdate:
+      maxSurge: 10%
+      maxUnavailable: 5%
+  template: # create pods using pod definition in this template
+    metadata:
+      # unlike pod-nginx.yaml, the name is not included in the meta data as a unique name is
+      # generated from the deployment name
+      labels:
+        app: redis
+        release: v2
+    spec:
+      containers:
+        - name: redis
+          image: redis:3
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5  # 容器启动后第一次执行探测是需要等待多少秒
+            periodSeconds: 15 # 执行探测的频率。默认是10秒，最小1秒
+            timeoutSeconds: 1 # 探测超时时间。默认1秒，最小1秒
+            successThreshold: 1 # 探测失败后，最少连续探测成功多少次才被认定为成功。默认是1。对于liveness必须是1。最小值是1。
+            failureThreshold: 3 # 探测成功后，最少连续探测失败多少次才被认定为失败。默认是3。最小值是1。
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 1
+#          resources:
+#            limits:
+#              cpu: 100m
+#              memory: 4Gi
+#            requests:
+#              cpu: 1m
+#              memory: 1Gi

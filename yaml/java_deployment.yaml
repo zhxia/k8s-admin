@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: test
+  name: dep-ubt
+  labels:
+    app: dep-ubt
+spec:
+  selector:
+    matchLabels:
+      app: app-ubt
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: app-ubt
+    spec:
+      containers:
+        - name: ubt
+          image: harbor.akcops.com/java/ubt:5-7485a9e-1.0.0-test2
+          ports:
+            - containerPort: 80
+      imagePullSecrets:
+        - name: image-secret
+#  kubectl create secret docker-registry <secret名称(docker-image-secret)> --namespace=<命名空间名称> --docker-username=<镜像仓库用户名> --docker-password=<镜像仓库密码> --docker-server=<镜像仓库地址>
+#  kubectl create secret docker-registry image-secret --namespace=test --docker-username=run --docker-password=Tjuak2eiVBU6jb7 --docker-server=http://harbor.akcops.com
